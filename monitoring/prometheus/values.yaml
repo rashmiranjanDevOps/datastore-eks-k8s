@@ -1,0 +1,35 @@
+serverFiles:
+  alerting_rules.yml:
+    groups:
+    - name: backend-alerts
+      rules:
+      - alert: BackendDown
+        expr: kube_deployment_status_replicas_available{deployment="datastore-backend"} == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Backend is DOWN 🚨"
+
+alertmanager:
+  enabled: true
+
+  config:
+    global:
+      resolve_timeout: 5m
+
+    route:
+      receiver: slack-alerts
+
+    receivers:
+      - name: slack-alerts
+        slack_configs:
+          - api_url: #add your slack webhook url
+            channel: "#new-channel"
+            send_resolved: true
+
+server:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - prometheus-alertmanager:9093

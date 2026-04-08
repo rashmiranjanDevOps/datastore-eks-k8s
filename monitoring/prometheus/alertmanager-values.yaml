@@ -1,0 +1,16 @@
+alertmanager:
+  enabled: true
+
+  config:
+    global:
+      resolve_timeout: 5m
+
+    route:
+      receiver: slack-alerts
+
+    receivers:
+      - name: slack-alerts
+        slack_configs:
+          - api_url: #add your slack webhook url
+            channel: "#new-channel"
+            send_resolved: true
